@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import com.example.voicerecord.databinding.ActivityVoicePlayBinding
@@ -22,6 +23,9 @@ class VoicePlayActivity : AppCompatActivity() {
     val updateTimeNow=1
     val updateSeekBar=2
     val playOver=3
+    var isOver=false
+    var speed=Array<Float>(8){i->0f}
+    var speedLevel=3
     val handler=object: Handler(Looper.getMainLooper()){
         override fun handleMessage(msg: Message){
             when(msg.what){
@@ -47,6 +51,19 @@ class VoicePlayActivity : AppCompatActivity() {
         val file= File(filename)
         val name=file.name
         binding.voicePlayName.setText(name)
+        speed[1]=0.5f
+        speed[2]=0.8f
+        speed[3]=1.0f
+        speed[4]=1.25f
+        speed[5]=1.5f
+        speed[6]=2.0f
+        speed[7]=3.0f
+//        speed.add(2,0.8f)
+//        speed.add(3,1.0f)
+//        speed.add(4,1.25f)
+//        speed.add(5,1.5f)
+//        speed.add(6,2f)
+//        speed.add(7,3f)
         mMediaPlayer=MediaPlayer()
         mMediaPlayer?.setDataSource(file.absolutePath)
         mMediaPlayer?.prepare()
@@ -73,6 +90,7 @@ class VoicePlayActivity : AppCompatActivity() {
             rePlay()
         }
         else {
+            setSpeed()
             mMediaPlayer?.start()
             isPlaying = true
             binding.voicePlayButtonPause.visibility = View.VISIBLE
@@ -106,6 +124,13 @@ class VoicePlayActivity : AppCompatActivity() {
         binding.voicePlayButtonPause.setOnClickListener() {
             pausePlay()
         }
+        binding.voicePlaySpeedUp.setOnClickListener(){
+            changeSpeedLevel(1)
+        }
+        binding.voicePlaySpeedDown.setOnClickListener(){
+            changeSpeedLevel(-1)
+        }
+
         binding.voicePlaySeekBar.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
@@ -129,11 +154,38 @@ class VoicePlayActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         mMediaPlayer?.release()
+        isOver=true;
+        isPlaying=false;
+    }
+
+    fun changeSpeedLevel(value: Int){
+        speedLevel+=value
+        if(speedLevel>7)
+            speedLevel=7
+        else if(speedLevel<1)
+            speedLevel=1
+        else{
+            setSpeed()
+        }
+
+        Log.v("speedLevel",speedLevel.toString())
+        var text:String="%.1f".format(speed[speedLevel])
+        if(speedLevel==4)
+            text="%.2f".format(speed[speedLevel])
+
+        binding.voicePlaySpeed.setText(text)
+
+    }
+
+    fun setSpeed(){
+
+        mMediaPlayer?.playbackParams=mMediaPlayer?.playbackParams!!.setSpeed(speed[speedLevel])
+        Log.v("speed", mMediaPlayer?.playbackParams!!.speed.toString())
     }
 
     fun autoUpdate(){
         thread{
-            while(true){
+            while(!isOver){
                 if(isPlaying){
                     var position:Int=(mMediaPlayer!!.currentPosition)
                     var seek_positon:Int=position*100/duration
@@ -160,7 +212,7 @@ class VoicePlayActivity : AppCompatActivity() {
     }
 
     fun timeFormat(value:Int): String {
-        val str=(if(value/60<10)"0" else "")+value/60+":"+(if(value<10)"0" else "")+value
+        val str=(if(value/60<10)"0" else "")+value/60+":"+(if(value%60<10)"0" else "")+value%60
         return str
     }
 }

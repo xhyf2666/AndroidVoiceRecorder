@@ -2,6 +2,7 @@ package com.example.voicerecord.Fragment
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Context
 import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
@@ -11,6 +12,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +23,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.voicerecord.R
+import com.example.voicerecord.View.WaveView
+import java.io.BufferedWriter
 import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStreamWriter
 import java.nio.ShortBuffer
 import java.util.*
 import kotlin.concurrent.thread
@@ -33,6 +39,8 @@ class VoiceRecordFragment : Fragment() {
     var path:String=""
     lateinit var fileName:String
     val updateTimeText=1
+    val updateWaveView=2
+    val clearWaveView=3
     var button_start_record:ImageButton?=null
     var button_delete:ImageButton?=null
     var button_pause:ImageButton?=null
@@ -40,12 +48,20 @@ class VoiceRecordFragment : Fragment() {
     var button_continue:ImageButton?=null
     var mAudioRecord:AudioRecord?=null
     var audioSize:Int=0
-    var default_format="mp3"
+    var default_format="aac"
+    var waveview:WaveView?=null
     val handler=object:Handler(Looper.getMainLooper()){
         override fun handleMessage(msg:Message){
             when(msg.what){
                 updateTimeText->{
                     activity?.findViewById<TextView>(R.id.record_time_text)?.setText(msg.obj as String)
+                }
+                updateWaveView->{
+                    System.out.println("set waveview "+msg.obj)
+                    waveview?.putValue(msg.obj as Int)
+                }
+                clearWaveView->{
+                    waveview?.clearValue()
                 }
             }
         }
@@ -71,6 +87,7 @@ class VoiceRecordFragment : Fragment() {
         button_pause=activity?.findViewById<ImageButton>(R.id.button_pause_record)
         button_stop=activity?.findViewById<ImageButton>(R.id.button_stop_record)
         button_continue=activity?.findViewById<ImageButton>(R.id.button_continue_record)
+        waveview=activity?.findViewById<WaveView>(R.id.voice_wave_view)
         button_start_record?.setOnClickListener(){
             startRecord()
         }
@@ -106,7 +123,7 @@ class VoiceRecordFragment : Fragment() {
         mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         /* ②设置音频文件的编码：AAC/AMR_NB/AMR_MB/Default 声音的（波形）的采样 */
         mMediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-        fileName = DateFormat.format("yyyyMMdd_HHmmss", Calendar.getInstance(Locale.CHINA)).toString()+ ".mp3"
+        fileName = DateFormat.format("yyyyMMdd_HHmmss", Calendar.getInstance(Locale.CHINA)).toString()+ "."+default_format
         //注意文件夹要创建之后才能使用
         var filePath =  path+fileName
         /* ③准备 */
@@ -152,6 +169,10 @@ class VoiceRecordFragment : Fragment() {
         mMediaRecorder?.release()
         mMediaRecorder=null
         activity?.findViewById<TextView>(R.id.record_time_text)?.setText("")
+
+        val msg=Message()
+        msg.what=clearWaveView
+        handler.sendMessage(msg)
     }
 
     fun continueRecord(){
@@ -186,9 +207,6 @@ class VoiceRecordFragment : Fragment() {
     }
 
     fun countTime(){
-        System.out.println("count_time")
-        System.out.println(isRecord)
-        System.out.println(isPause)
         thread{
             var value=0;//单位 10 ms
             while(isRecord){
@@ -196,7 +214,7 @@ class VoiceRecordFragment : Fragment() {
                 if(!isPause){
                     value++
                     val msg=Message()
-                    val str=""+value/100/60+":"+(if(value/100<10)"0" else "")+value/100+":"+(if(value%100<10)"0" else "")+value%100
+                    val str=""+value/100/60+":"+(if(value/100%60<10)"0" else "")+value/100%60+":"+(if(value%100<10)"0" else "")+value%100
                     msg.what=updateTimeText
                     msg.obj=str
                     handler.sendMessage(msg)
@@ -254,10 +272,20 @@ class VoiceRecordFragment : Fragment() {
                     mAudioRecord?.read(buffer,0,buffer.size)
                     var value_sum=0;
                     for(i in 0..audioSize-2 step 2){
+                        if((buffer[i+1].toInt()and 0xff)<0x80){//正数
                         val value:Int=(buffer[i].toInt() and 0xff) or ((buffer[i+1].toInt() and 0xff)shl 8);
                         value_sum+=value
+                        }
+                        else{//负数求补码
+                            var value:Int=(buffer[i].toInt() and 0xff) or ((buffer[i+1].toInt() and 0xff)shl 8);
+                            value=0xffff-value+1
+                            value_sum+=value
+                        }
                     }
-                    //System.out.println(value_sum/audioSize)
+                    val msg=Message()
+                    msg.what=updateWaveView;
+                    msg.obj=value_sum;
+                    handler.sendMessage(msg)
                 }
             }
         }
