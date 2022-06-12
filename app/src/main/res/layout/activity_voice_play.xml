@@ -6,6 +6,34 @@
     android:layout_height="match_parent"
     tools:context=".Activity.VoicePlayActivity">
 
+    <ImageButton
+        android:id="@+id/button_back_play"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:background="#00000000"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.073"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.023"
+        app:srcCompat="@drawable/icon_back" />
+
+    <ImageButton
+        android:id="@+id/button_delete_play"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:background="#00000000"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.949"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.023"
+        app:srcCompat="@drawable/button_voice_record_delete" />
+
     <TextView
         android:id="@+id/voice_play_name"
         android:layout_width="wrap_content"
@@ -15,36 +43,33 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.076" />
+        app:layout_constraintVertical_bias="0.128" />
 
+    <SurfaceView
+        android:id="@+id/sv_wave"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_margin="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.473"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.454" />
 
     <SeekBar
         android:id="@+id/voice_play_seekBar"
-        android:layout_width="280dp"
+        android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:max="100"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.771" />
-
-    <TextView
-        android:id="@+id/voice_play_time_now"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="00:00"
-        android:textSize="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/voice_play_seekBar"
-        app:layout_constraintHorizontal_bias="0.64"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.768" />
+        app:layout_constraintVertical_bias="0.844" />
 
     <TextView
         android:id="@+id/voice_play_time_end"
@@ -57,7 +82,46 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/voice_play_seekBar"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.768" />
+        app:layout_constraintVertical_bias="0.842" />
+
+    <TextView
+        android:id="@+id/voice_play_speed_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="&gt;&gt;"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.907"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.785" />
+
+    <TextView
+        android:id="@+id/voice_play_speed_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="&lt;&lt;"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.068"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.785" />
+
+    <TextView
+        android:id="@+id/voice_play_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1.0"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.785" />
 
     <ImageButton
         android:id="@+id/voice_play_button_pause"
@@ -71,8 +135,51 @@
         app:layout_constraintHorizontal_bias="0.475"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.894"
+        app:layout_constraintVertical_bias="0.971"
         app:srcCompat="@drawable/button_voice_record_pause" />
+
+    <ImageButton
+        android:id="@+id/voice_play_button_reset"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:background="#00000000"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.898"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.971"
+        app:srcCompat="@drawable/icon_reset" />
+
+    <ImageButton
+        android:id="@+id/voice_play_button_loop_not"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:background="#00000000"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.099"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976"
+        app:srcCompat="@drawable/icon_loop_not" />
+
+    <ImageButton
+        android:id="@+id/voice_play_button_loop"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:background="#00000000"
+        android:scaleType="centerCrop"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.099"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976"
+        app:srcCompat="@drawable/icon_loop" />
 
     <ImageButton
         android:id="@+id/voice_play_button_play"
@@ -86,46 +193,20 @@
         app:layout_constraintHorizontal_bias="0.475"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.894"
+        app:layout_constraintVertical_bias="0.971"
         app:srcCompat="@drawable/button_voice_record_continue" />
 
     <TextView
-        android:id="@+id/voice_play_speed"
+        android:id="@+id/voice_play_time_now"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1.0"
-        android:textSize="30dp"
+        android:text="00:00"
+        android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintEnd_toStartOf="@+id/voice_play_seekBar"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.71" />
-
-    <TextView
-        android:id="@+id/voice_play_speed_up"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="&gt;&gt;"
-        android:textSize="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.907"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.71" />
-
-    <TextView
-        android:id="@+id/voice_play_speed_down"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="&lt;&lt;"
-        android:textSize="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.068"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.71" />
+        app:layout_constraintVertical_bias="0.843" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

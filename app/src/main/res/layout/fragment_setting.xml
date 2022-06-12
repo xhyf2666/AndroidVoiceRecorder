@@ -1,17 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="设置界面"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/textView"
+        android:layout_width="100dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="52dp"
+        android:text="可视化特效"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/visualize_effect_group"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
+        <RadioButton
+            android:id="@+id/visualize_effect_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="柱形特效1" />
+
+        <RadioButton
+            android:id="@+id/visualize_effect_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:text="柱形特效2" />
+
+        <RadioButton
+            android:id="@+id/visualize_effect_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="柱形特效3" />
+
+        <RadioButton
+            android:id="@+id/visualize_effect_4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="柱形特效(FFT)" />
+
+        <RadioButton
+            android:id="@+id/visualize_effect_5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="线形特效" />
+
+        <RadioButton
+            android:id="@+id/visualize_effect_6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="圆形特效" />
+
+        <RadioButton
+            android:id="@+id/visualize_effect_7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="圆形波纹特效" />
+
+        <RadioButton
+            android:id="@+id/visualize_effect_8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="复合特效1" />
+
+        <RadioButton
+            android:id="@+id/visualize_effect_9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="复合特效2" />
+
+        <RadioButton
+            android:id="@+id/visualize_effect_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="复合特效3" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/button_setting_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="保存"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/visualize_effect_group"
+        app:layout_constraintVertical_bias="0.0" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
