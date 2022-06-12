@@ -87,7 +87,6 @@ class VoicePlayActivity : AppCompatActivity() {
 
         val state = mMediaPlayer?.audioSessionId?.let { visualizerManager.init(it) }
         if (NierVisualizerManager.SUCCESS != state) {
-            // 可以进行一些错误处理...
         }
         duration= mMediaPlayer!!.duration//单位 ms
         binding.voicePlayTimeEnd.setText(timeFormat(duration/1000))
@@ -221,6 +220,7 @@ class VoicePlayActivity : AppCompatActivity() {
         }
     }
 
+    //开始播放，继续播放
     fun playVoice(){
         if(mMediaPlayer?.currentPosition==duration){
             rePlay()
@@ -235,6 +235,7 @@ class VoicePlayActivity : AppCompatActivity() {
         }
     }
 
+    //暂停播放
     fun pausePlay(){
             mMediaPlayer?.pause()
             isPlaying=false
@@ -243,17 +244,20 @@ class VoicePlayActivity : AppCompatActivity() {
     }
 
 
+    //重置播放进度
     fun resetPlay(){
         mMediaPlayer?.reset()
         mMediaPlayer?.setDataSource(filename)
         mMediaPlayer?.prepare()
     }
 
+    //重新播放
     fun rePlay(){
         resetPlay()
         playVoice()
     }
 
+    //设置Button监听
     fun setOnclickFun() {
         binding.voicePlayButtonPlay.setOnClickListener() {
             playVoice()
@@ -283,6 +287,7 @@ class VoicePlayActivity : AppCompatActivity() {
             changeLoop()
         }
 
+        //设置进度条滑动监听
         binding.voicePlaySeekBar.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
@@ -311,6 +316,7 @@ class VoicePlayActivity : AppCompatActivity() {
         isPlaying=false;
     }
 
+    //显示删除提示框
     fun showDeleteDialog(){
         val builder= AlertDialog.Builder(this)
         builder.setTitle("提示")
@@ -329,6 +335,7 @@ class VoicePlayActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    //修改倍速等级
     fun changeSpeedLevel(value: Int){
         speedLevel+=value
         if(speedLevel>7)
@@ -348,12 +355,14 @@ class VoicePlayActivity : AppCompatActivity() {
 
     }
 
+    //修改播放速度
     fun setSpeed(){
 
         mMediaPlayer?.playbackParams=mMediaPlayer?.playbackParams!!.setSpeed(speed[speedLevel])
         Log.v("speed", mMediaPlayer?.playbackParams!!.speed.toString())
     }
 
+    //用于自动更新的线程
     fun autoUpdate(){
         thread{
             while(!isOver){
@@ -382,6 +391,7 @@ class VoicePlayActivity : AppCompatActivity() {
         }
     }
 
+    //更新当前播放更新
     fun updateTimeNow(value:Int){
         var msg=Message()
         msg.what=updateTimeNow
@@ -389,6 +399,7 @@ class VoicePlayActivity : AppCompatActivity() {
         handler.sendMessage(msg)
     }
 
+    //更新进度条
     fun updateSeekBar(value:Int){
         var msg=Message()
         msg.what=updateSeekBar
@@ -396,6 +407,7 @@ class VoicePlayActivity : AppCompatActivity() {
         handler.sendMessage(msg)
     }
 
+    //时间格式化
     fun timeFormat(value:Int): String {
         val str=(if(value/60<10)"0" else "")+value/60+":"+(if(value%60<10)"0" else "")+value%60
         return str

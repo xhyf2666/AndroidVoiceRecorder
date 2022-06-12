@@ -108,6 +108,7 @@ class VoiceRecordFragment : Fragment() {
         }
     }
 
+    //开始录音
     fun startRecord(){
         isRecord=true
         button_pause?.visibility=View.VISIBLE
@@ -131,11 +132,7 @@ class VoiceRecordFragment : Fragment() {
         mMediaRecorder?.prepare()
         mMediaRecorder?.start()
 
-         audioSize= AudioRecord.getMinBufferSize(
-            44100,
-            AudioFormat.CHANNEL_IN_MONO,
-            AudioFormat.ENCODING_PCM_16BIT
-        )
+
         audioSize=(44100/40)*2
         mAudioRecord = AudioRecord(
             MediaRecorder.AudioSource.MIC,
@@ -149,6 +146,7 @@ class VoiceRecordFragment : Fragment() {
         showVoiceWave()
     }
 
+    //暂停录音
     fun pauseRecord(){
         isPause=true
         button_pause?.visibility=View.INVISIBLE
@@ -158,6 +156,7 @@ class VoiceRecordFragment : Fragment() {
         mMediaRecorder?.pause()
     }
 
+    //停止录音
     fun stopRecord(){
         isRecord=false
         isPause=false
@@ -175,6 +174,7 @@ class VoiceRecordFragment : Fragment() {
         handler.sendMessage(msg)
     }
 
+    //继续录音
     fun continueRecord(){
         isPause=false
         button_pause?.visibility=View.VISIBLE
@@ -184,6 +184,7 @@ class VoiceRecordFragment : Fragment() {
         mMediaRecorder?.resume()
     }
 
+    //删除当前录音结果
     fun deleteRecord(){
         stopRecord()
         var file=File(path+fileName)
@@ -191,6 +192,7 @@ class VoiceRecordFragment : Fragment() {
             file.delete()
     }
 
+    //检查权限，获取权限
     fun checkPermission(){
         val permissions= arrayOf(
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -206,6 +208,7 @@ class VoiceRecordFragment : Fragment() {
         }
     }
 
+    //计时线程
     fun countTime(){
         thread{
             var value=0;//单位 10 ms
@@ -224,6 +227,7 @@ class VoiceRecordFragment : Fragment() {
         }
     }
 
+    //显示删除录音提示框
     fun showDeleteDialog(){
         val builder=AlertDialog.Builder(context)
         builder.setTitle("提示")
@@ -239,6 +243,7 @@ class VoiceRecordFragment : Fragment() {
         dialog.show()
     }
 
+    //显示保存录音提示框，可修改文件名
     fun showSaveDialog(){
         val builder=AlertDialog.Builder(context)
         builder.setTitle("保存录音文件")
@@ -264,6 +269,7 @@ class VoiceRecordFragment : Fragment() {
         dialog.show()
     }
 
+    //实时显示声音波形的线程
     fun showVoiceWave(){
         thread{
             while(isRecord){
@@ -282,6 +288,7 @@ class VoiceRecordFragment : Fragment() {
                             value_sum+=value
                         }
                     }
+                    //计算出一次采样的总振幅
                     val msg=Message()
                     msg.what=updateWaveView;
                     msg.obj=value_sum;

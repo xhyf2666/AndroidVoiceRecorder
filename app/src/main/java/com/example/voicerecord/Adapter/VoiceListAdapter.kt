@@ -38,7 +38,6 @@ class VoiceListAdapter(val list:List<String>): RecyclerView.Adapter<VoiceListAda
             val intent = Intent(parent.context,VoicePlayActivity::class.java)
             intent.putExtra("filename",list[position])
             parent.context.startActivity(intent)
-            //Toast.makeText(parent.context,"play "+list[position],Toast.LENGTH_SHORT).show()
         }
         return viewHolder
     }

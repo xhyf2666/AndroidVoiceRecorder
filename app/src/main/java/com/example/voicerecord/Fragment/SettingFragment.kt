@@ -28,7 +28,6 @@ class SettingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_setting, container, false)
     }
 
@@ -48,6 +47,7 @@ class SettingFragment : Fragment() {
             9->{effect_id=R.id.visualize_effect_9}
             10->{effect_id=R.id.visualize_effect_10}
         }
+        //监听RadioGroup
         val effectRadioGroup=activity?.findViewById<RadioGroup>(R.id.visualize_effect_group)
         effectRadioGroup?.check(effect_id)
         effectRadioGroup?.setOnCheckedChangeListener(
@@ -61,6 +61,7 @@ class SettingFragment : Fragment() {
 
     }
 
+    //保存用户配置
     fun save(){
         var effect_type:Int=0;
         when(effect_id){

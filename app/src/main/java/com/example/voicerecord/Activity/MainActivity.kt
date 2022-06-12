@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         adapter.addFragment(SettingFragment())
         binding.viewPager.adapter=adapter
         binding.viewPager.setUserInputEnabled(false);
+        //绑定ViewPager2，实现三个主页面跳转
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -44,6 +45,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+        //点击按钮时变化UI
         binding.radioGroupBottom.setOnCheckedChangeListener{
             group,checkID->
             when(checkID){

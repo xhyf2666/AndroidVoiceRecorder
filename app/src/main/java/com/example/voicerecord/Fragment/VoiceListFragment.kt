@@ -37,6 +37,7 @@ class VoiceListFragment : Fragment() {
             lists.add(file.absolutePath)
         }
 
+        //从指定路径下获取文件列表，将数据传给recyclerView的adapter
         val recyclerView= activity?.findViewById<RecyclerView>(R.id.recycler_view_voice_list)
         recyclerView?.layoutManager= LinearLayoutManager(context)
         recyclerView?.adapter=VoiceListAdapter(lists)
