@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.voicerecord.Adapter.VoiceListAdapter
@@ -79,5 +80,6 @@ class SettingFragment : Fragment() {
         editor?.clear()
         editor?.putInt("effect_type",effect_type)
         editor?.apply()
+        Toast.makeText(context,"保存成功",Toast.LENGTH_SHORT).show()
     }
 }
