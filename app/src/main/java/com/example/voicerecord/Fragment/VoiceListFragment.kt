@@ -4,9 +4,9 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +16,7 @@ import java.io.File
 
 class VoiceListFragment : Fragment() {
     var path:String=""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -29,19 +30,20 @@ class VoiceListFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        //从指定路径下获取文件列表，将数据传给recyclerView的adapter
         path=context?.getExternalFilesDir("").toString()+"/voice/"
         var files= File(path).listFiles()
         val lists=ArrayList<String>()
         for(file in files){
-            System.out.println(file.absolutePath)
+            println(file.absolutePath)
             lists.add(file.absolutePath)
         }
-
-        //从指定路径下获取文件列表，将数据传给recyclerView的adapter
         val recyclerView= activity?.findViewById<RecyclerView>(R.id.recycler_view_voice_list)
         recyclerView?.layoutManager= LinearLayoutManager(context)
         recyclerView?.adapter=VoiceListAdapter(lists)
-        recyclerView?.addItemDecoration(SpacesItemDecoration(10))
+        if (recyclerView!!.itemDecorationCount == 0) {
+            recyclerView!!.addItemDecoration(SpacesItemDecoration(10))
+        }
 
     }
 
@@ -51,13 +53,15 @@ class VoiceListFragment : Fragment() {
         var files= File(path).listFiles()
         val lists=ArrayList<String>()
         for(file in files){
-            System.out.println(file.absolutePath)
+            println(file.absolutePath)
             lists.add(file.absolutePath)
         }
         val recyclerView= activity?.findViewById<RecyclerView>(R.id.recycler_view_voice_list)
         recyclerView?.layoutManager= LinearLayoutManager(context)
         recyclerView?.adapter=VoiceListAdapter(lists)
-
+        if (recyclerView!!.itemDecorationCount == 0) {
+            recyclerView!!.addItemDecoration(SpacesItemDecoration(10))
+        }
     }
 
     override fun onPause() {
