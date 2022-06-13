@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.os.SystemClock.sleep
 import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -94,7 +95,7 @@ class VoicePlayActivity : AppCompatActivity() {
         autoUpdate()
         setOnclickFun()
         mMediaPlayer?.setOnCompletionListener {
-            System.out.println("播放完毕")
+            println("播放完毕")
                 if(isLoop){
                     rePlay()
                 }
@@ -108,7 +109,7 @@ class VoicePlayActivity : AppCompatActivity() {
 
     //获取用户选择的可视化特效
     fun getEffectType(){
-        val preferences=getSharedPreferences("config", Context.MODE_PRIVATE)
+        val preferences=getSharedPreferences("config", MODE_PRIVATE)
         val effect_type=preferences.getInt("effect_type",7)
         when(effect_type){
             1->{
@@ -309,11 +310,12 @@ class VoicePlayActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
-        mMediaPlayer?.release()
-        visualizerManager.release()
         isOver=true;
         isPlaying=false;
+        sleep(200)
+        mMediaPlayer?.release()
+        visualizerManager.release()
+        super.onDestroy()
     }
 
     //显示删除提示框
@@ -371,7 +373,7 @@ class VoicePlayActivity : AppCompatActivity() {
                     var seek_positon:Int=position*100/duration
                     updateTimeNow(position/1000)
                     updateSeekBar(seek_positon)
-                    Thread.sleep(200)
+                    Thread.sleep(20)
                 }
             }
         }
@@ -393,7 +395,7 @@ class VoicePlayActivity : AppCompatActivity() {
 
     //更新当前播放更新
     fun updateTimeNow(value:Int){
-        var msg=Message()
+        val msg=Message()
         msg.what=updateTimeNow
         msg.obj=timeFormat(value)
         handler.sendMessage(msg)
@@ -401,7 +403,7 @@ class VoicePlayActivity : AppCompatActivity() {
 
     //更新进度条
     fun updateSeekBar(value:Int){
-        var msg=Message()
+        val msg=Message()
         msg.what=updateSeekBar
         msg.obj=value
         handler.sendMessage(msg)
