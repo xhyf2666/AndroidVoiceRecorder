@@ -1,11 +1,9 @@
 package com.example.voicerecord.Activity
 
 import android.app.AlertDialog
-import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.media.MediaPlayer
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,7 +13,7 @@ import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.SeekBar
-import com.example.voicerecord.R
+import androidx.appcompat.app.AppCompatActivity
 import com.example.voicerecord.databinding.ActivityVoicePlayBinding
 import me.bogerchan.niervisualizer.NierVisualizerManager
 import me.bogerchan.niervisualizer.renderer.IRenderer
@@ -23,7 +21,10 @@ import me.bogerchan.niervisualizer.renderer.circle.CircleBarRenderer
 import me.bogerchan.niervisualizer.renderer.circle.CircleRenderer
 import me.bogerchan.niervisualizer.renderer.circle.CircleSolidRenderer
 import me.bogerchan.niervisualizer.renderer.circle.CircleWaveRenderer
-import me.bogerchan.niervisualizer.renderer.columnar.*
+import me.bogerchan.niervisualizer.renderer.columnar.ColumnarType1Renderer
+import me.bogerchan.niervisualizer.renderer.columnar.ColumnarType2Renderer
+import me.bogerchan.niervisualizer.renderer.columnar.ColumnarType3Renderer
+import me.bogerchan.niervisualizer.renderer.columnar.ColumnarType4Renderer
 import me.bogerchan.niervisualizer.renderer.line.LineRenderer
 import me.bogerchan.niervisualizer.renderer.other.ArcStaticRenderer
 import me.bogerchan.niervisualizer.util.NierAnimator
@@ -32,27 +33,27 @@ import kotlin.concurrent.thread
 
 class VoicePlayActivity : AppCompatActivity() {
     private lateinit var binding:ActivityVoicePlayBinding
-    var filename:String?=""
+    private var filename:String?=""
     var duration:Int=0
     var mMediaPlayer:MediaPlayer?=null
-    var isPlaying:Boolean=false
-    var isLoop:Boolean=false
+    private var isPlaying:Boolean=false
+    private var isLoop:Boolean=false
     val updateTimeNow=1
     val updateSeekBar=2
     val playOver=3
-    var isOver=false
-    var speed=Array<Float>(8){i->0f}
-    var speedLevel=3
-    lateinit var effect: Array<IRenderer>
-    val visualizerManager = NierVisualizerManager()
-    val handler=object: Handler(Looper.getMainLooper()){
+    private var isOver=false
+    private var speed=Array(8){0f}
+    private var speedLevel=3
+    private lateinit var effect: Array<IRenderer>
+    private val visualizerManager = NierVisualizerManager()
+    private val handler=object: Handler(Looper.getMainLooper()){
         override fun handleMessage(msg: Message){
             when(msg.what){
                 updateTimeNow->{
-                    binding.voicePlayTimeNow.setText(msg.obj as String)
+                    binding.voicePlayTimeNow.text = msg.obj as String
                 }
                 updateSeekBar->{
-                    binding.voicePlaySeekBar.setProgress(msg.obj as Int)
+                    binding.voicePlaySeekBar.progress = msg.obj as Int
                 }
                 playOver->{
                     pausePlay()
@@ -63,16 +64,16 @@ class VoicePlayActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (getSupportActionBar() != null){
-            getSupportActionBar()?.hide();
+        if (supportActionBar != null){
+            supportActionBar?.hide()
         }
         super.onCreate(savedInstanceState)
         binding= ActivityVoicePlayBinding.inflate(layoutInflater)
         setContentView(binding.root)
         filename=intent.getStringExtra("filename")
-        val file= File(filename)
-        val name=file.name
-        binding.voicePlayName.setText(name)
+        val file= filename?.let { File(it) }
+        val name= file?.name
+        binding.voicePlayName.text = name
         speed[1]=0.5f
         speed[2]=0.8f
         speed[3]=1.0f
@@ -81,16 +82,16 @@ class VoicePlayActivity : AppCompatActivity() {
         speed[6]=2.0f
         speed[7]=3.0f
         mMediaPlayer=MediaPlayer()
-        mMediaPlayer?.setDataSource(file.absolutePath)
+        if (file != null) {
+            mMediaPlayer?.setDataSource(file.absolutePath)
+        }
         mMediaPlayer?.prepare()
 
         getEffectType()
 
-        val state = mMediaPlayer?.audioSessionId?.let { visualizerManager.init(it) }
-        if (NierVisualizerManager.SUCCESS != state) {
-        }
+        mMediaPlayer?.audioSessionId?.let { visualizerManager.init(it) }
         duration= mMediaPlayer!!.duration//单位 ms
-        binding.voicePlayTimeEnd.setText(timeFormat(duration/1000))
+        binding.voicePlayTimeEnd.text = timeFormat(duration/1000)
         playVoice()
         autoUpdate()
         setOnclickFun()
@@ -108,10 +109,9 @@ class VoicePlayActivity : AppCompatActivity() {
     }
 
     //获取用户选择的可视化特效
-    fun getEffectType(){
+    private fun getEffectType(){
         val preferences=getSharedPreferences("config", MODE_PRIVATE)
-        val effect_type=preferences.getInt("effect_type",7)
-        when(effect_type){
+        when(preferences.getInt("effect_type",7)){
             1->{
                 effect= arrayOf(ColumnarType1Renderer())
             }
@@ -222,7 +222,7 @@ class VoicePlayActivity : AppCompatActivity() {
     }
 
     //开始播放，继续播放
-    fun playVoice(){
+    private fun playVoice(){
         if(mMediaPlayer?.currentPosition==duration){
             rePlay()
         }
@@ -246,45 +246,45 @@ class VoicePlayActivity : AppCompatActivity() {
 
 
     //重置播放进度
-    fun resetPlay(){
+    private fun resetPlay(){
         mMediaPlayer?.reset()
         mMediaPlayer?.setDataSource(filename)
         mMediaPlayer?.prepare()
     }
 
     //重新播放
-    fun rePlay(){
+    private fun rePlay(){
         resetPlay()
         playVoice()
     }
 
     //设置Button监听
-    fun setOnclickFun() {
-        binding.voicePlayButtonPlay.setOnClickListener() {
+    private fun setOnclickFun() {
+        binding.voicePlayButtonPlay.setOnClickListener {
             playVoice()
         }
-        binding.voicePlayButtonPause.setOnClickListener() {
+        binding.voicePlayButtonPause.setOnClickListener {
             pausePlay()
         }
-        binding.voicePlaySpeedUp.setOnClickListener(){
+        binding.voicePlaySpeedUp.setOnClickListener{
             changeSpeedLevel(1)
         }
-        binding.voicePlaySpeedDown.setOnClickListener(){
+        binding.voicePlaySpeedDown.setOnClickListener{
             changeSpeedLevel(-1)
         }
-        binding.buttonDeletePlay.setOnClickListener(){
+        binding.buttonDeletePlay.setOnClickListener {
             showDeleteDialog()
         }
-        binding.buttonBackPlay.setOnClickListener(){
+        binding.buttonBackPlay.setOnClickListener{
             finish()
         }
-        binding.voicePlayButtonReset.setOnClickListener(){
+        binding.voicePlayButtonReset.setOnClickListener{
             rePlay()
         }
-        binding.voicePlayButtonLoop.setOnClickListener(){
+        binding.voicePlayButtonLoop.setOnClickListener{
             changeLoop()
         }
-        binding.voicePlayButtonLoopNot.setOnClickListener(){
+        binding.voicePlayButtonLoopNot.setOnClickListener{
             changeLoop()
         }
 
@@ -296,22 +296,21 @@ class VoicePlayActivity : AppCompatActivity() {
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
-                System.out.println("startTrack")
+                println("startTrack")
             }
 
             override fun onStopTrackingTouch(p0: SeekBar?) {
-                System.out.println("stopTrack")
-                val current_position:Int=binding.voicePlaySeekBar.progress*duration/100
-                mMediaPlayer?.seekTo(current_position)
+                println("stopTrack")
+                val currentPosition:Int=binding.voicePlaySeekBar.progress*duration/100
+                mMediaPlayer?.seekTo(currentPosition)
                 updateTimeNow(binding.voicePlaySeekBar.progress*duration/100/1000)
             }
-
         })
     }
 
     override fun onDestroy() {
-        isOver=true;
-        isPlaying=false;
+        isOver=true
+        isPlaying=false
         sleep(200)
         mMediaPlayer?.release()
         visualizerManager.release()
@@ -319,17 +318,16 @@ class VoicePlayActivity : AppCompatActivity() {
     }
 
     //显示删除提示框
-    fun showDeleteDialog(){
+    private fun showDeleteDialog(){
         val builder= AlertDialog.Builder(this)
         builder.setTitle("提示")
         builder.setMessage("您确定要删除当前录音吗？")
 
         builder.setPositiveButton(
-            "确定") { dialog, id ->
+            "确定") { _, _ ->
             mMediaPlayer?.release()
-            mMediaPlayer=null
-            val file=File(filename)
-            file.delete()
+            mMediaPlayer = null
+            filename?.let { File(it) }?.delete()
             finish()
         }
         builder.setNegativeButton("取消",null)
@@ -338,7 +336,7 @@ class VoicePlayActivity : AppCompatActivity() {
     }
 
     //修改倍速等级
-    fun changeSpeedLevel(value: Int){
+    private fun changeSpeedLevel(value: Int){
         speedLevel+=value
         if(speedLevel>7)
             speedLevel=7
@@ -353,26 +351,25 @@ class VoicePlayActivity : AppCompatActivity() {
         if(speedLevel==4)
             text="%.2f".format(speed[speedLevel])
 
-        binding.voicePlaySpeed.setText(text)
+        binding.voicePlaySpeed.text = text
 
     }
 
     //修改播放速度
-    fun setSpeed(){
-
+    private fun setSpeed(){
         mMediaPlayer?.playbackParams=mMediaPlayer?.playbackParams!!.setSpeed(speed[speedLevel])
         Log.v("speed", mMediaPlayer?.playbackParams!!.speed.toString())
     }
 
     //用于自动更新的线程
-    fun autoUpdate(){
+    private fun autoUpdate(){
         thread{
             while(!isOver){
                 if(isPlaying){
-                    var position:Int=(mMediaPlayer!!.currentPosition)
-                    var seek_positon:Int=position*100/duration
+                    val position:Int=(mMediaPlayer!!.currentPosition)
+                    val seekPosition:Int=position*100/duration
                     updateTimeNow(position/1000)
-                    updateSeekBar(seek_positon)
+                    updateSeekBar(seekPosition)
                     Thread.sleep(20)
                 }
             }
@@ -380,13 +377,13 @@ class VoicePlayActivity : AppCompatActivity() {
     }
 
     //修改循环播放状态
-    fun changeLoop(){
-        if(binding.voicePlayButtonLoop.visibility.equals(View.VISIBLE)){
+    private fun changeLoop(){
+        if(binding.voicePlayButtonLoop.visibility == View.VISIBLE){
             binding.voicePlayButtonLoop.visibility=View.INVISIBLE
             binding.voicePlayButtonLoopNot.visibility=View.VISIBLE
             isLoop=false
         }
-        else if(binding.voicePlayButtonLoopNot.visibility.equals(View.VISIBLE)){
+        else if(binding.voicePlayButtonLoopNot.visibility == View.VISIBLE){
             binding.voicePlayButtonLoop.visibility=View.VISIBLE
             binding.voicePlayButtonLoopNot.visibility=View.INVISIBLE
             isLoop=true
@@ -402,7 +399,7 @@ class VoicePlayActivity : AppCompatActivity() {
     }
 
     //更新进度条
-    fun updateSeekBar(value:Int){
+    private fun updateSeekBar(value:Int){
         val msg=Message()
         msg.what=updateSeekBar
         msg.obj=value
@@ -410,8 +407,7 @@ class VoicePlayActivity : AppCompatActivity() {
     }
 
     //时间格式化
-    fun timeFormat(value:Int): String {
-        val str=(if(value/60<10)"0" else "")+value/60+":"+(if(value%60<10)"0" else "")+value%60
-        return str
+    private fun timeFormat(value: Int): String {
+        return (if (value / 60 < 10) "0" else "") + value / 60 + ":" + (if (value % 60 < 10) "0" else "") + value % 60
     }
 }

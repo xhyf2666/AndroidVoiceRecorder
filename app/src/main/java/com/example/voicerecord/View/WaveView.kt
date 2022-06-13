@@ -1,5 +1,6 @@
 package com.example.voicerecord.View
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -10,9 +11,9 @@ import android.view.View
 
 
 class WaveView : View {
-    constructor(context: Context?) : super(context) {}
+    constructor(context: Context?) : super(context)
     constructor(context: Context?,  attrs: AttributeSet) : super(context, attrs) {
-        init(attrs)
+        init()
     }
 
     constructor(
@@ -20,7 +21,7 @@ class WaveView : View {
         attrs: AttributeSet,
         defStyleAttr: Int
     ) : super(context, attrs, defStyleAttr) {
-        init(attrs)
+        init()
     }
 
     private var waveType //波形展示类型
@@ -38,9 +39,9 @@ class WaveView : View {
     private var maxLineCount = 0
     private var hasOver //值记录是否已完毕
             = false
-    var paintCenterLine: Paint? = null
-    var paintLine: Paint? = null
-    private fun init(attrs: AttributeSet) {
+    private var paintCenterLine: Paint? = null
+    private var paintLine: Paint? = null
+    private fun init() {
 
         waveType = 0
         centerLineColor = Color.BLUE
@@ -49,13 +50,13 @@ class WaveView : View {
         lineWidth = 5
         lineSpace = 5
         paintCenterLine = Paint()
-        paintCenterLine!!.setStrokeWidth(centerLineWidth.toFloat())
-        paintCenterLine!!.setColor(centerLineColor)
+        paintCenterLine!!.strokeWidth = centerLineWidth.toFloat()
+        paintCenterLine!!.color = centerLineColor
         paintLine = Paint()
-        paintLine!!.setStrokeWidth(lineWidth.toFloat())
-        paintLine!!.setAntiAlias(true)
-        paintLine!!.setColor(lineColor)
-        maxValue=300000;
+        paintLine!!.strokeWidth = lineWidth.toFloat()
+        paintLine!!.isAntiAlias = true
+        paintLine!!.color = lineColor
+        maxValue=300000
     }
 
     fun putValue(value: Int) {
@@ -75,17 +76,11 @@ class WaveView : View {
         invalidate()
     }
 
-    fun setHasOver(over: Boolean) {
-        hasOver = over
-    }
-
-    fun hasOver(): Boolean {
-        return hasOver
-    }
-
     private var lastX = 0
     private var moveX = 0
     private var hasBeenEnd = false
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> lastX = event.rawX.toInt()
@@ -102,16 +97,16 @@ class WaveView : View {
         return true
     }
 
-    protected override fun onDraw(canvas: Canvas) {
-        val yCenter = getHeight() / 2
+    override fun onDraw(canvas: Canvas) {
+        val yCenter = height / 2
         if (maxLineCount == 0) {
-            maxLineCount = getWidth() / (lineSpace + lineWidth)
+            maxLineCount = width / (lineSpace + lineWidth)
         }
         if (waveType == WVTYPE_CENTER_LINE) {
             /***************画中线 */
             paintCenterLine?.let {
                 canvas.drawLine(0F, yCenter.toFloat(),
-                    getWidth().toFloat(), yCenter.toFloat(),
+                    width.toFloat(), yCenter.toFloat(),
                     it
                 )
             }
@@ -155,21 +150,21 @@ class WaveView : View {
                 var endX = 0
                 var startY = 0
                 var endY = 0
-                val lineHeight = (values!![i].toFloat()  /maxValue  * getHeight()).toInt()
+                val lineHeight = (values!![i].toFloat()  /maxValue  * height).toInt()
                 when (waveType) {
                     WVTYPE_CENTER_LINE -> {
                         startX =
                             (i - startIndex) * (lineSpace + lineWidth) + lineWidth / 2 - startOffset
                         endX = startX
-                        startY = (getHeight() - lineHeight) / 2
-                        endY = (getHeight() - lineHeight) / 2 + lineHeight
+                        startY = (height - lineHeight) / 2
+                        endY = (height - lineHeight) / 2 + lineHeight
                     }
                     WVTYPE_SINGLE -> {
                         startX =
                             (i - startIndex) * (lineSpace + lineWidth) + lineWidth / 2 - startOffset
                         endX = startX
-                        startY = getHeight() - lineHeight
-                        endY = getHeight()
+                        startY = height - lineHeight
+                        endY = height
                     }
                 }
                 paintLine?.let {

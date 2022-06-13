@@ -1,12 +1,10 @@
 package com.example.voicerecord.Fragment
 
-import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,11 +13,7 @@ import com.example.voicerecord.R
 import java.io.File
 
 class VoiceListFragment : Fragment() {
-    var path:String=""
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private var path: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,53 +25,42 @@ class VoiceListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         //从指定路径下获取文件列表，将数据传给recyclerView的adapter
-        path=context?.getExternalFilesDir("").toString()+"/voice/"
-        var files= File(path).listFiles()
-        val lists=ArrayList<String>()
-        for(file in files){
+        path = context?.getExternalFilesDir("").toString() + "/voice/"
+        val files = File(path).listFiles()
+        val lists = ArrayList<String>()
+        for (file in files!!) {
             println(file.absolutePath)
             lists.add(file.absolutePath)
         }
-        val recyclerView= activity?.findViewById<RecyclerView>(R.id.recycler_view_voice_list)
-        recyclerView?.layoutManager= LinearLayoutManager(context)
-        recyclerView?.adapter=VoiceListAdapter(lists)
+        val recyclerView = activity?.findViewById<RecyclerView>(R.id.recycler_view_voice_list)
+        recyclerView?.layoutManager = LinearLayoutManager(context)
+        recyclerView?.adapter = VoiceListAdapter(lists)
         if (recyclerView!!.itemDecorationCount == 0) {
-            recyclerView!!.addItemDecoration(SpacesItemDecoration(10))
+            recyclerView.addItemDecoration(SpacesItemDecoration(10))
         }
 
     }
 
     override fun onResume() {
         super.onResume()
-        path=context?.getExternalFilesDir("").toString()+"/voice/"
-        var files= File(path).listFiles()
-        val lists=ArrayList<String>()
-        for(file in files){
+        path = context?.getExternalFilesDir("").toString() + "/voice/"
+        val files = File(path).listFiles()
+        val lists = ArrayList<String>()
+        for (file in files!!) {
             println(file.absolutePath)
             lists.add(file.absolutePath)
         }
-        val recyclerView= activity?.findViewById<RecyclerView>(R.id.recycler_view_voice_list)
-        recyclerView?.layoutManager= LinearLayoutManager(context)
-        recyclerView?.adapter=VoiceListAdapter(lists)
+        val recyclerView = activity?.findViewById<RecyclerView>(R.id.recycler_view_voice_list)
+        recyclerView?.layoutManager = LinearLayoutManager(context)
+        recyclerView?.adapter = VoiceListAdapter(lists)
         if (recyclerView!!.itemDecorationCount == 0) {
-            recyclerView!!.addItemDecoration(SpacesItemDecoration(10))
+            recyclerView.addItemDecoration(SpacesItemDecoration(10))
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
     }
 
 
     //设置间距的类
-    class SpacesItemDecoration(val value:Int)  : RecyclerView.ItemDecoration() {
-        override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-            super.onDraw(c, parent, state)
-        }
-
-        override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-            super.onDrawOver(c, parent, state)
-        }
+    class SpacesItemDecoration(private val value: Int) : RecyclerView.ItemDecoration() {
 
         override fun getItemOffsets(
             outRect: Rect,
@@ -86,7 +69,7 @@ class VoiceListFragment : Fragment() {
             state: RecyclerView.State
         ) {
             super.getItemOffsets(outRect, view, parent, state)
-            outRect.bottom=value
+            outRect.bottom = value
         }
     }
 
